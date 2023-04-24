@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load cart %}
+{% block title %}
+Cart
+{% endblock title %}
+
+{% block content %}
+<div class="container my-3">
+ {% if prod_dtls %}
+ 
+
+    <table class="table table-success table-striped">
+        <tr>
+            <th>Sno.</th>
+            <th>Product Name</th>
+            <th>Product Image</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total Price</th>
+        </tr>
+
+       
+            {% for c in prod_dtls %}
+             <tr>
+            <td>{{forloop.counter}}.</td>
+            <td>{{c.pro_name}}</td>
+            <td><img src="{{c.pro_image.url}}" alt="" width=50 height=50></td>
+            <td>Rs.{{c.price}}</td>
+            <td>{{c|cart_quantity:request.session.cart}}</td>
+            <td>Rs.{{c|total_price:request.session.cart}}</td>
+               </tr>
+            {% endfor %}
+     <tr>   
+        <td colspan=4>
+            <strong>
+                <center>Payable Amount
+                </center>
+                </strong>
+        </td>
+        <td>
+            Rs.{{prod_dtls|pay_amount:request.session.cart}}
+        </td>
+         <td>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#checkout">
+                checkout
+            </button>
+        </td>
+     </tr>
+  
+    </table>
+    <!-- Modal -->
+<div class="modal fade" id="checkout" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Checkout</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'checkout' %}" method= "post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Address</label>
+                <input type="text" class="form-control" id="add" name="address" placeholder="enter address">
+            </div>
+            <div class="mb-3">
+                <label for="formGroupExampleInput2" class="form-label">Mobile</label>
+                <input type="text" class="form-control" id="mbl"  name="mobile" placeholder="enter mobile">
+            </div>
+            <input type="submit" class="btn btn-primary" value="checkout" name="" id="">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div>
+ <h1>{{error}}</h1>
+</div>
+
+ {% endif %}
+</div>
+
+{% endblock content %}
